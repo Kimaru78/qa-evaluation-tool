@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA Evaluation Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eaf2fb;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h2 {
+      color: #003366;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .section {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    .output {
+      white-space: pre-wrap;
+      background-color: #f4f4f4;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h2>QA Evaluation Form</h2>
+
+  <form id="qaForm">
+    <div class="section">
+      <h3>Evaluation Details</h3>
+      <label>Agent Name:</label>
+      <input type="text" id="agentName" required />
+
+      <label>Call Link:</label>
+      <input type="url" id="callLink" required />
+
+      <label>Policy # or Phone #:</label>
+      <input type="text" id="policyOrPhone" />
+
+      <label>Call Type:</label>
+      <select id="callType">
+        <option>Sales</option>
+        <option>Non-Sales</option>
+      </select>
+
+      <label>Call Duration:</label>
+      <input type="text" id="callDuration" />
+
+      <label>Evaluator:</label>
+      <select id="evaluator">
+        <option>Christian</option>
+        <option>Roger</option>
+        <option>Gloria</option>
+      </select>
+
+      <label>Call Date:</label>
+      <input type="date" id="callDate" required />
+    </div>
+
+    <div class="section">
+      <h3>Call Details</h3>
+      <div id="questions"></div>
+    </div>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <div id="result" class="output"></div>
+
+  <script>
+    const questionsData = [
+      { q: "Call Opening", weight: 5 },
+      { q: "Branded the call as Dealer services?", weight: 5 },
+      { q: "Script Adherence", weight: 12 },
+      { q: "Did the agent asked milage", weight: 5 },
+      { q: "Did the agent mention reason of the call?", weight: 5 },
+      { q: "Did the agent asked Qualifying questions?", weight: 5 },
+      { q: "Correct Plan presentation?", weight: 12 },
+      { q: "Did the agent used rebuttals?", weight: 5 },
+      { q: "Correct Benefits?", weight: 12 },
+      { q: "Down payment negotiation?", weight: 5 },
+      { q: "Did the agent proactively offer discounts?", weight: 5 },
+      { q: "Did the agent asked payment info?", weight: 5 },
+      { q: "Did the agent asked VIN?", weight: 4 },
+      { q: "Full T/C?", weight: 15 }
+    ];
+
+    const questionsContainer = document.getElementById("questions");
+    questionsData.forEach((item, index) => {
+      const label = document.createElement("label");
+      label.innerText = item.q;
+      const select = document.createElement("select");
+      select.id = `q${index}`;
+      ["Yes", "No", "N/A"].forEach(optionText => {
+        const option = document.createElement("option");
+        option.value = optionText;
+        option.innerText = optionText;
+        select.appendChild(option);
+      });
+      questionsContainer.appendChild(label);
+      questionsContainer.appendChild(select);
+    });
+
+    document.getElementById("qaForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const details = {
+        agent: document.getElementById("agentName").value,
+        link: document.getElementById("callLink").value,
+        policy: document.getElementById("policyOrPhone").value,
+        type: document.getElementById("callType").value,
+        duration: document.getElementById("callDuration").value,
+        evaluator: document.getElementById("evaluator").value,
+        date: document.getElementById("callDate").value
+      };
+
+      let score = 0;
+      let total = 0;
+      questionsData.forEach((item, index) => {
+        const val = document.getElementById(`q${index}`).value;
+        if (val !== "N/A") {
+          total += item.weight;
+          if (val === "Yes") score += item.weight;
+        }
+      });
+
+      const summary = `QA Evaluation Summary\n\nAgent Name: ${details.agent}\nCall Link: ${details.link}\nPolicy or Phone#: ${details.policy}\nCall Type: ${details.type}\nEvaluator: ${details.evaluator}\nCall Date: ${details.date}\nCall Duration: ${details.duration}\n\nScore: ${score}/${total}\n\nSummary:\nAgent demonstrated strengths in key areas like script adherence and benefit explanation. Areas needing attention will be discussed in coaching.`;
+
+      document.getElementById("result").innerText = summary;
+    });
+  </script>
+</body>
+</html>
