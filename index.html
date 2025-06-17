@@ -93,7 +93,7 @@
 
     <div class="button-group">
       <button type="submit">Submit</button>
-      <button type="button" onclick="document.getElementById('qaForm').reset(); document.getElementById('result').innerText = '';">Clear Form</button>
+      <button type="button" onclick="document.getElementById('qaForm').reset(); document.getElementById('result').innerText = ''">Clear Form</button>
     </div>
   </form>
 
@@ -148,6 +148,7 @@
       let score = 0;
       let total = 0;
       let failedItems = [];
+      let passedItems = [];
 
       questionsData.forEach((item, index) => {
         const val = document.getElementById(`q${index}`).value;
@@ -155,6 +156,7 @@
           total += item.weight;
           if (val === "Yes") {
             score += item.weight;
+            passedItems.push(item.q);
           } else if (val === "No") {
             failedItems.push(item.q);
           }
@@ -162,10 +164,14 @@
       });
 
       const improvementNotes = failedItems.length > 0
-        ? `Areas needing improvement: \n- ${failedItems.join("\n- ")}`
+        ? `Areas needing improvement:\n- ${failedItems.join("\n- ")}`
         : "No issues noted.";
 
-      const summary = `QA Evaluation Summary\n\nAgent Name: ${details.agent}\nCall Link: ${details.link}\nPolicy or Phone#: ${details.policy}\nCall Type: ${details.type}\nEvaluator: ${details.evaluator}\nCall Date: ${details.date}\nCall Duration: ${details.duration}\n\nScore: ${score}/${total}\n\nSummary:\n${improvementNotes}`;
+      const highlights = passedItems.slice(0, 2).length > 0
+        ? `Highlights:\n- ${passedItems.slice(0, 2).join("\n- ")}`
+        : "No highlights available.";
+
+      const summary = `QA Evaluation Summary\n\nAgent Name: ${details.agent}\nCall Link: ${details.link}\nPolicy or Phone#: ${details.policy}\nCall Type: ${details.type}\nEvaluator: ${details.evaluator}\nCall Date: ${details.date}\nCall Duration: ${details.duration}\n\nScore: ${score}/${total}\n\n${highlights}\n\n${improvementNotes}`;
 
       document.getElementById("result").innerText = summary;
 
@@ -190,5 +196,4 @@
   </script>
 </body>
 </html>
-
 
