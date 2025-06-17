@@ -41,6 +41,14 @@
       margin-top: 20px;
       border: 1px solid #ccc;
     }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .button-group button {
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -83,7 +91,10 @@
       <div id="questions"></div>
     </div>
 
-    <button type="submit">Submit</button>
+    <div class="button-group">
+      <button type="submit">Submit</button>
+      <button type="button" onclick="document.getElementById('qaForm').reset(); document.getElementById('result').innerText = '';">Clear Form</button>
+    </div>
   </form>
 
   <div id="result" class="output"></div>
@@ -136,15 +147,25 @@
 
       let score = 0;
       let total = 0;
+      let failedItems = [];
+
       questionsData.forEach((item, index) => {
         const val = document.getElementById(`q${index}`).value;
         if (val !== "N/A") {
           total += item.weight;
-          if (val === "Yes") score += item.weight;
+          if (val === "Yes") {
+            score += item.weight;
+          } else if (val === "No") {
+            failedItems.push(item.q);
+          }
         }
       });
 
-      const summary = `QA Evaluation Summary\n\nAgent Name: ${details.agent}\nCall Link: ${details.link}\nPolicy or Phone#: ${details.policy}\nCall Type: ${details.type}\nEvaluator: ${details.evaluator}\nCall Date: ${details.date}\nCall Duration: ${details.duration}\n\nScore: ${score}/${total}\n\nSummary:\nAgent demonstrated strengths in key areas like script adherence and benefit explanation. Areas needing attention will be discussed in coaching.`;
+      const improvementNotes = failedItems.length > 0
+        ? `Areas needing improvement: \n- ${failedItems.join("\n- ")}`
+        : "No issues noted.";
+
+      const summary = `QA Evaluation Summary\n\nAgent Name: ${details.agent}\nCall Link: ${details.link}\nPolicy or Phone#: ${details.policy}\nCall Type: ${details.type}\nEvaluator: ${details.evaluator}\nCall Date: ${details.date}\nCall Duration: ${details.duration}\n\nScore: ${score}/${total}\n\nSummary:\n${improvementNotes}`;
 
       document.getElementById("result").innerText = summary;
 
@@ -169,4 +190,5 @@
   </script>
 </body>
 </html>
+
 
