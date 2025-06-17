@@ -147,7 +147,26 @@
       const summary = `QA Evaluation Summary\n\nAgent Name: ${details.agent}\nCall Link: ${details.link}\nPolicy or Phone#: ${details.policy}\nCall Type: ${details.type}\nEvaluator: ${details.evaluator}\nCall Date: ${details.date}\nCall Duration: ${details.duration}\n\nScore: ${score}/${total}\n\nSummary:\nAgent demonstrated strengths in key areas like script adherence and benefit explanation. Areas needing attention will be discussed in coaching.`;
 
       document.getElementById("result").innerText = summary;
+
+      fetch('https://script.google.com/macros/s/AKfycbw_yB1zdtApaiNrHlcQ05BPqOJefDLJ9ME-tKyTY5NvXVvzx5DjSEX9jzHrAdVvlfzK/exec', {
+        method: 'POST',
+        body: JSON.stringify({
+          agent: details.agent,
+          link: details.link,
+          policy: details.policy,
+          type: details.type,
+          evaluator: details.evaluator,
+          date: details.date,
+          duration: details.duration,
+          score: `${score}/${total}`,
+          summary: summary
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
     });
   </script>
 </body>
 </html>
+
